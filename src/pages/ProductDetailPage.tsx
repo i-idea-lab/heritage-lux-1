@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api';
 
 interface Product {
   id: number;
@@ -24,7 +25,7 @@ const ProductDetailPage: React.FC = () => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/api/products/${productId}`);
+        const response = await fetch(`${API_BASE_URL}/products/${productId}`);
         if (response.ok) {
           const data = await response.json();
           setProduct(data);

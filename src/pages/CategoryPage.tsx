@@ -1,19 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-const products = [
-  { id: 1, name: 'Emerald Raw Silk Kurta', price: '₹18,500', category: '2 Piece Set • Hand Embroidered', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAIcgRCJo1WECjXCe85ySs0IiRmBaNDrH962L-tjGDYjgOx1nTUQs7xnn9KSPSSvsZajuTfCXbFQOsnDlPTlHqGdwRYjpzn7zXlNmdADA72biZWhTnt4UpssgLYM93XRh_Lxglk9AtnK-gD3oiLPgqgrSDZNIpVLsED0hA9K3Q-ObZgYtWLfNIdv_vxxq7GEwqhSu-DkrY29Rc-UqR9xeW3sYGVHEuLxkg__KowZtkohl5-_60S1ztVLt-hLBRirrjGZRRSl5LIYz0' },
-  { id: 2, name: 'Ivory Chikankari Set', price: '₹24,000', category: 'Lucknowi Craft • Pure Linen', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBH-9-NgWo6dnrgigIrGvwcWYYzNqG_k14e14l2Ys5dILshx19XClqomTVYoqrukPkhFtPzwuYovakOFY8dAuJADvyZqW1RUVsRLTTDHCBcIseMFHNVswbar6IBtw6LRfOxsvkMNqh9hEHhBb87kjRS8V0oQci2IVcEr8U5ZJYstif7gzifHnjXnt7RyBSPSZkYVrclJghhuWv7Q6QTK7nrl-nPG-IduYdTL8DyVx0PP1dXnl7UMGuifynZd5soAz2_OOV9TklddN0' },
-  { id: 3, name: 'Midnight Indigo Kurta', price: '₹12,200', category: 'Modern Fit • Giza Cotton', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCVdejoSLYZCMqhxcnFd-eQAWwDd3ibCHOrIpcpY51-0c0POlpUILsjuQR69FP5RwrEXHtLl7a6rnMaNE9jN45JpIquZHZXGRul3e2pL7RThszA6wwqdHniW6QZUCgrbfVR-aQjVLttQBEneyHax8Q77AtFcECWMlu-oV5q9U09op5KoYyGL9dEvuOaF38d0iruKr-GTK8p4FS7z77oxf79OQEKK0XGb_opcWUDKNg16P2ZWCPw07fQDHlza_KHNCBiQGQLAniRwIk' },
-  { id: 4, name: 'Sunset Ochre Silk', price: '₹31,500', category: 'Banarasi Weave • Classic', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDbO_2s-bJ9LohBOwiNzUgcppBnoVbLR4h3EVt-gt6w-wudtZ2QV9lgFBcq2HicAq5TkgCrAww_puwRq3r0b12ZlxSxztQwq0S0Y3YDvnFINXE-XrWbzCpmB-Ort-LCR-tocXhaAGQSqBIKsBPWGScoBX3VUw5Yc1oSpYMVbexXuvqpERsBVKe64qco-avyg4wyQ6PeVfxjn4YeS3a0T64Ciqu4U_60JCxi9lUMhup9bkHL1l499zbq83xb-7sNK-E5CyvBhgqkCwE' },
-  { id: 5, name: 'Charcoal Geometric Set', price: '₹15,900', category: 'Matte Silk • Contemporary', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCMk5zV8FwROaNmuvKkDO85okbT-JeWc-GiePqSKG2yeMcMrPH6X_JcbhN0BLpjhFupYgh5vTuha1GaHmyQyIRVxIbmw0rN7gAUslC3BNxcO2oMN0KdcpvhJCwYDgGMO2AyP1WPWUf8eOfcAzOqNxOo7KSDmvqmY1i7-rUJgVK6j2ZsaQ14H_eWlJhiRu-PX9NL7qGLkuAyI-p1NXX3grIaC81ozLEUe1OQSHn-p3HM8d9ZdnE-H53s-gGpM8Mb3vY_mCI4mvFN4w8' },
-  { id: 6, name: 'Saffron Embroidered Set', price: '₹28,000', category: 'Ceremonial • Hand Crafted', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAdicBU-R6PsOIY5iP5vfP_kW4dgnCBaTCchDQTlpZ_J6a3LjSs1lF_CjiCLjMf-WfHJfmdzzhXP6cF_vczeq9VkDkL48nhC0NNT-u83FSHsBveilcxUGpBtkyaLw-pmgYQ7rLieUpIXSVloRBdK_BF132DSiVMByBMIEOE3_7IVvH6GR7tMMOq9LyIwsqTXPqUWfz7jxgEWh8Vpc1cavyrfKoJBJIbwJMQQpfLEIkgPmNlD1ZOhWPCIm5CmDp_061JT40AzIki4rE' },
-];
+interface Product {
+  id: number;
+  name: string;
+  categoryId: string;
+  price: number;
+  description: string;
+  collection: string;
+  images: string[];
+  sizes: string[];
+  color: string;
+  material: string;
+}
 
 const CategoryPage: React.FC = () => {
   const { categoryName } = useParams<{ categoryName: string }>();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const isSherwanis = categoryName === 'sherwanis';
   const formattedTitle = categoryName ? categoryName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : 'Collection';
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:5000/api/products/category/${categoryName}`);
+        if (response.ok) {
+          const data = await response.json();
+          setProducts(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (categoryName) {
+      fetchProducts();
+    }
+  }, [categoryName]);
 
   return (
     <main className="pt-32 pb-24">
@@ -109,28 +137,35 @@ const CategoryPage: React.FC = () => {
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-gutter gap-y-16">
-            {products.map((prod) => (
-              <Link key={prod.id} to={`/product/${prod.id}`} className="group cursor-pointer">
-                <div className="relative overflow-hidden mb-6 aspect-[3/4]">
-                  <img alt={prod.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 shadow-sm transition-shadow hover:shadow-lg" src={prod.img} />
-                  <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                    <button className="bg-surface-container-lowest text-primary py-4 px-6 font-label-sm text-label-sm uppercase tracking-[0.2em] shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                      Quick View
-                    </button>
+
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <p className="font-label-sm text-label-sm uppercase tracking-widest animate-pulse">Refining the Collection...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-gutter gap-y-16">
+              {products.map((prod) => (
+                <Link key={prod.id} to={`/product/${prod.id}`} className="group cursor-pointer">
+                  <div className="relative overflow-hidden mb-6 aspect-[3/4]">
+                    <img alt={prod.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 shadow-sm transition-shadow hover:shadow-lg" src={prod.images[0]} />
+                    <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                      <button className="bg-surface-container-lowest text-primary py-4 px-6 font-label-sm text-label-sm uppercase tracking-[0.2em] shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                        Quick View
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-headline-md text-xl text-primary mb-1">{prod.name}</h3>
-                    <p className="font-body-md text-on-surface-variant text-sm mb-2">{prod.category}</p>
-                    <p className="font-label-sm text-label-sm font-semibold text-secondary">{prod.price}</p>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-headline-md text-xl text-primary mb-1">{prod.name}</h3>
+                      <p className="font-body-md text-on-surface-variant text-sm mb-2">{prod.collection}</p>
+                      <p className="font-label-sm text-label-sm font-semibold text-secondary">₹{prod.price.toLocaleString()}</p>
+                    </div>
+                    <span className="material-symbols-outlined text-outline hover:text-error transition-colors">favorite</span>
                   </div>
-                  <span className="material-symbols-outlined text-outline hover:text-error transition-colors">favorite</span>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          )}
 
           {/* Pagination */}
           <div className="mt-24 flex justify-center items-center space-x-4">

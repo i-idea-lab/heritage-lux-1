@@ -1,7 +1,65 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
+
+interface Product {
+  id: number;
+  name: string;
+  categoryId: string;
+  price: number;
+  description: string;
+  collection: string;
+  images: string[];
+  sizes: string[];
+  color: string;
+  material: string;
+}
 
 const ProductDetailPage: React.FC = () => {
+  const { productId } = useParams<{ productId: string }>();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:5000/api/products/${productId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setProduct(data);
+          if (data.sizes && data.sizes.length > 0) {
+            setSelectedSize(data.sizes[Math.floor(data.sizes.length / 2)]);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch product:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (productId) {
+      fetchProduct();
+    }
+  }, [productId]);
+
+  if (loading) {
+    return (
+      <main className="mt-32 flex justify-center items-center h-[60vh]">
+        <p className="font-label-sm text-label-sm uppercase tracking-widest animate-pulse">Unveiling the Masterpiece...</p>
+      </main>
+    );
+  }
+
+  if (!product) {
+    return (
+      <main className="mt-32 flex justify-center items-center h-[60vh]">
+        <p className="font-label-sm text-label-sm uppercase tracking-widest text-error">The selection could not be found.</p>
+      </main>
+    );
+  }
+
   return (
     <main className="mt-32 max-w-[1440px] mx-auto px-8 lg:px-16 mb-24">
       {/* Product Detail Section */}
@@ -10,11 +68,7 @@ const ProductDetailPage: React.FC = () => {
         <div className="lg:w-3/5 flex flex-col md:flex-row gap-6">
           {/* Thumbnails */}
           <div className="hidden md:flex flex-col gap-4 w-20 shrink-0">
-            {[
-              'https://lh3.googleusercontent.com/aida-public/AB6AXuBIu3QRXjw-EKgYLY-gSyn94Acsgwst7Fm0i_H9IadUXObEF3_qKObOv5Tbkb8eCQpRNKWEgoL8il-pMHagaZfzvpuUApZzpmdydKcwhkY2urbW9fKETMODDgvmEcdMwihdUh1Ii1OMqBJS99MATClcqKpWjiXoO-_sihEDKJytQWFcWGKyDW50Po2prfUt5ThGPMTFYG52r_fXSgIB7KvCzcEQm8Yo_kWSwsWE8nUpf5Nd2COAc_RyfjmgzdcL8JWuX0CGZcXYZJ4',
-              'https://lh3.googleusercontent.com/aida-public/AB6AXuD3lLW_NTbxilwGVsUevDDXOOWqWyV24_LhIbuYzVrc93AfDDIWKLRflhsB3JyUp7lrf-w_-OeoehyOs4Y8KA0_Me2tYcqmxDSIk52kGjL5Cugovc7AsaGBOqq16j6LOdHOZxJXQQF3aGgroJjdyqwXaLxYec4PP6DFLwurmXLXmlv-KEnh6mjqS8s_Iy_lbP0VkIVUPF2UPTFfwluWTNQSpxHiQJdUB2Fi6CwyUQ7rCsDhWHreVf-U14cd2QVaflbEPbKG-EAKYp0',
-              'https://lh3.googleusercontent.com/aida-public/AB6AXuDWGUNHHdr5qHsfNk_rFIxwm3LG1uMCK5vaVgdUEC2rTCZt0e3BdGdr-rSHvlB0bhOim_GleSeQZE7nADcgZss5MFuN1X0Bg6FIqNvuqv_pT1IgFba4qOBS4D5U8BQUDmb3aWclIsJ9SZFzB8buhz24UH3D2IQVjekHZxvnCvqOKPvdBmYAN5Vrf8T6AxDIYfV-fO8o_eT6E4xQXFaHjhpLc-ttBNMjdcy_SpTr2BnuhbxqgAH7fiW4VvbF_Ln4Vc2M27aDYtDzGH4'
-            ].map((url, idx) => (
+            {product.images.map((url, idx) => (
               <div key={idx} className={`aspect-[3/4] bg-surface-container overflow-hidden cursor-pointer ${idx === 0 ? 'border border-primary/20' : 'opacity-60 hover:opacity-100 transition-opacity'}`}>
                 <img className="w-full h-full object-cover" alt={`Product thumbnail ${idx + 1}`} src={url} />
               </div>
@@ -24,24 +78,24 @@ const ProductDetailPage: React.FC = () => {
           <div className="flex-grow aspect-[3/4] bg-surface-container overflow-hidden">
             <img
               className="w-full h-full object-cover"
-              alt="Midnight Emerald Velvet Sherwani"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAH9h262r49XBBNT7g7wkKiZ2dLE80fvjsjqo1ZvV2TSUhVUHQvjZt-c0S5As-dyz2HpYd2Ad1oJssnASrrASaqN5RjpJzYvdCsLOLREtxfl5ScDr5lHJvN4ucgKo57xKop4kIr7McL-Kv_etNE1urfs7w5OuH8r74ogzlBu2b48akbkRrGhvNWBfHpalXWUIS_WHfOmy630PQ7BcHtUl3pwQAuKmeSc32MsbzzxsBaON16iuMSB7hfziwlzXQfj2wUPc_NNaJXo9A"
+              alt={product.name}
+              src={product.images[0]}
             />
           </div>
         </div>
         {/* Right Side: Product Info */}
         <div className="lg:w-2/5 flex flex-col pt-4">
           <div className="mb-8">
-            <span className="text-label-sm font-label-sm uppercase tracking-[0.2em] text-outline mb-2 block">The Royal Collection</span>
-            <h1 className="text-3xl md:text-4xl font-headline-lg text-primary mb-4">Midnight Emerald Velvet Sherwani</h1>
-            <p className="text-2xl font-headline-md text-secondary">₹1,85,000</p>
+            <span className="text-label-sm font-label-sm uppercase tracking-[0.2em] text-outline mb-2 block">{product.collection}</span>
+            <h1 className="text-3xl md:text-4xl font-headline-lg text-primary mb-4">{product.name}</h1>
+            <p className="text-2xl font-headline-md text-secondary">₹{product.price.toLocaleString()}</p>
           </div>
           <div className="mb-10 space-y-4">
             <p className="text-lg font-body-lg text-on-surface-variant leading-relaxed">
-              Exude regal sophistication in our signature Midnight Emerald Velvet Sherwani. Each piece is a labor of love, featuring meticulously hand-stitched velvet and antique gold zardosi embroidery that captures the essence of ancestral Indian craftsmanship.
+              {product.description}
             </p>
             <p className="text-body-md font-body-md text-on-surface-variant italic">
-              Includes matching silk trousers and a heritage dust bag.
+              Crafted from premium {product.material.toLowerCase()} in {product.color}.
             </p>
           </div>
           {/* Size Selector */}
@@ -51,8 +105,12 @@ const ProductDetailPage: React.FC = () => {
               <button className="text-label-sm font-label-sm text-secondary border-b border-secondary/40 hover:border-secondary transition-all uppercase">Size Guide</button>
             </div>
             <div className="grid grid-cols-5 gap-3">
-              {['S', 'M', 'L', 'XL', 'XXL'].map(size => (
-                <button key={size} className={`py-3 border text-on-surface font-body-md transition-all ${size === 'M' ? 'border-2 border-primary text-primary' : 'border-outline/30 hover:border-primary'}`}>
+              {product.sizes.map(size => (
+                <button
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={`py-3 border text-on-surface font-body-md transition-all ${selectedSize === size ? 'border-2 border-primary text-primary' : 'border-outline/30 hover:border-primary'}`}
+                >
                   {size}
                 </button>
               ))}

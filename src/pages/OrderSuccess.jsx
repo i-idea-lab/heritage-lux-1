@@ -1,7 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import CartItem from '../components/CartItem';
 
 const OrderSuccess = () => {
@@ -32,7 +30,6 @@ const OrderSuccess = () => {
 
   return (
     <div className="bg-background min-h-screen text-on-surface">
-      <Header />
       <main className="min-h-screen pt-32 pb-section-gap px-margin-mobile md:px-margin-desktop">
         <div className="max-w-4xl mx-auto">
           {/* Hero Success Message */}
@@ -124,7 +121,6 @@ const OrderSuccess = () => {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import CartItem from '../components/CartItem';
 import OrderSummary from '../components/OrderSummary';
 import LookbookItem from '../components/LookbookItem';
@@ -53,7 +51,6 @@ const ShoppingBag = () => {
 
   return (
     <div className="min-h-screen">
-      <Header />
       <main className="min-h-screen pt-32 pb-24 px-8 max-w-[1440px] mx-auto">
         <div className="mb-12">
           <h1 className="font-headline-display text-headline-display text-primary italic">Shopping Bag</h1>
@@ -92,7 +89,6 @@ const ShoppingBag = () => {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 };

@@ -1,7 +1,5 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import CartItem from '../components/CartItem';
 import OrderSummary from '../components/OrderSummary';
 
@@ -25,7 +23,6 @@ const ShippingDetails = () => {
 
   return (
     <div className="bg-background min-h-screen">
-      <Header simplified />
       <main className="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-12">
         <div className="flex flex-col lg:flex-row gap-gutter">
           {/* Left Side: Shipping & Delivery */}
@@ -139,7 +136,6 @@ const ShippingDetails = () => {
           </aside>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };

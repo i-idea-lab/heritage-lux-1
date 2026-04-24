@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import CartItem from '../components/CartItem';
 import { API_BASE_URL } from '../config/api';
 
@@ -66,7 +64,6 @@ const PaymentGateway = () => {
 
   return (
     <div className="bg-background min-h-screen">
-      <Header />
       <main className="pt-32 pb-24 px-8 max-w-[1440px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-8">
@@ -151,7 +148,6 @@ const PaymentGateway = () => {
           </aside>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };
